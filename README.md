@@ -39,9 +39,9 @@
 
 ## What This Does
 
-This project uses public stock market discussions from Stocktwits to build a text classifier. The goal is to identify different types of discussions based on how people present information, opinions, and market reactions.
+This project uses public stock market discussions from Stocktwits to build a text classifier. The goal is to identify different types of stock discussions based on how investors present evidence, predictions, emotional reactions, and trading activities.
 
-I chose Stocktwits because I am interested in investing and want to understand the patterns in stock discussions. I will collect and label real posts, then fine-tune a model to classify new posts.
+I chose Stocktwits because I am interested in investing and want to understand how people communicate about stocks. I am collecting and labeling real posts to fine-tune a model that can classify new stock market discussions.
 
 ---
 
@@ -69,27 +69,24 @@ These differences could help train a classifier to recognize whether a stock dis
 
 ### `analysis`
 
-**Definition:**A post that explains a stock market opinion using specific financial data, economic information, or checkable supporting evidence.
+**Definition:**A post that uses specific, checkable financial, economic, or technical information to explain a market opinion or frame a market question.
 
-**Example 1:**
-
-> ![alt text](image.png)
-> $NVDA
-> Nvidia slices through its 50-day moving average. Can it recover it by the end of the week? #ibdpartner
-
-**Example 2:**
+**Example 1:Finwizard61**
 
 > $NVDA Now officially trading at an absurdly low future multiples …
 
 1. at 23 x 2027 eps estimate…
-
 2. at 14 x 2028 eps estimate..
 
-Sell off unwarranted …load up folks this is a gift 🎁 at these low prices.
+Sell off unwarranted …load up folks this is a gift 🎁 at these low prices..
+
+**Example 2:tpanikorn:**
+
+> @superrush That is right. Timing is everything in business. $450M cash in the bank, growing $28M last quarter. QNX backlog just crossed $1B while revenue grew 26%. The Alloy Kore design win added over $100M into backlog. There will be at least one more contract before year end. This is an easy sale for underwriters. They have just to mention $NVDA Drive OS and Physical AI platform using QNX. It is a no brainer.
 
 ### `prediction`
 
-**Definition:**A post that predicts a future stock price or market direction without providing specific supporting evidence.
+**Definition:**A post that predicts or speculates about future market movement without specific, relevant supporting evidence.
 
 **Example 1:**
 
@@ -99,7 +96,9 @@ Sell off unwarranted …load up folks this is a gift 🎁 at these low prices.
 
 > NVDA 230 next week stop being scared load the boat
 
-### 'reaction'
+Why: Both posts predict a future price without providing evidence supporting the prediction.
+
+### `reaction`
 
 **Definition**: A post that mainly expresses emotions, excitement, frustration, or humor about the market without providing analysis or a specific prediction.
 
@@ -111,15 +110,41 @@ $NVDA this is brutal
 
 $NVDA mother of god
 
+Why: These posts mainly express emotions rather than explaining financial information or predicting a specific market movement.
+
+### 'trade_update'
+
+**Definition**: A post that reports a completed trade, an existing investment position, or a personal trading result.
+
+**Example 1** — Shyne123:
+
+$NVDA I made off like a bandit on my puts last week and this week. I’m off to Vegas 🍻
+
+**Example 2** — ShadowCapital\_:
+
+$NVDA Making money on both sides of this dog today. Shorts this morning, and caught that pop into close.
+
+Why: These posts describe personal trading activity and results rather than simply expressing an opinion or prediction.
+
 ### The hardest boundary
 
 **Which two labels:**analysis and prediction
+
+**Why this boundary is difficult**:
 
 Both types of posts can discuss future stock prices. Some investors mention specific price targets, but that doesn't necessarily mean they have provided evidence supporting their predictions.
 
 **The decision rule I used every time:**
 
 If a post makes a prediction and explains it using specific, checkable supporting information, I classify it as analysis. If it only predicts a price or market direction without specific supporting evidence, I classify it as prediction. A price target by itself does not count as supporting evidence.
+
+**Additional rule for overlapping categories:**
+
+If a post explicitly reports a completed trade or existing position, I classify it as trade_update when that is its main purpose. If the post mainly expresses emotion without a supported argument, prediction, or trading update, I classify it as reaction.
+
+**Optional Stretch Feature — Fourth Label**
+
+I chose trade_update as a fourth label because the other three categories do not specifically capture investors reporting trades they completed, positions they hold, or gains and losses they experienced. These posts appear in the Stocktwits community and represent a distinct communication pattern.
 
 ---
 
