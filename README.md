@@ -210,14 +210,47 @@ analysis because the post refers to a specific technical indicator, the 50-day m
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
 **Base model:**
+ distilbert-base-uncased (DistilBERT)
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
+Epochs: 3
+
+Learning rate: 2e-5
+
+Batch size: 16
+
+Random seed: 42
+
+Maximum sequence length: 128 tokens
+
+Device: CP
 
 **Anything I changed from the defaults, and why:**
+I kept all the default training settings provided by CodePath. I changed the dataset path from data/practice_labels.csv to labels.csv to train on my 200 Stocktwits posts. I also configured the four labels: analysis, prediction, reaction, and trade_update.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+**Split sizes:** 
+Training: 139 posts (69.5%)
+
+Validation: 31 posts (15.5%)
+
+Test: 30 posts (15%)
+
+
+**Dataset Split (Seed 42)**
+
+| Label | Training (70%) | Validation (15%) | Test (15%) | Total |
+|:---|---:|---:|---:|---:|
+| `analysis` | 38 | 9 | 8 | 55 |
+| `prediction` | 37 | 8 | 8 | 53 |
+| `reaction` | 48 | 11 | 11 | 70 |
+| `trade_update` | 16 | 3 | 3 | 22 |
+| **Total** | **139** | **31** | **30** | **200** |
+
+
+The dataset contains 200 labeled Stocktwits posts, split into 139 training examples, 31 validation examples, and 30 test examples.
+
+The `trade_update` category has only 3 test examples, making its F1 score less reliable. Even one incorrect prediction can significantly affect the results. I will investigate this limitation when evaluating the model across three different seeds in Unit 6.
+
 
 ---
 
