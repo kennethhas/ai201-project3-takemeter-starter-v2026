@@ -39,9 +39,21 @@
 
 ## What This Does
 
-This project uses public stock market discussions from Stocktwits to build a text classifier. The goal is to identify different types of stock discussions based on how investors present evidence, predictions, emotional reactions, and trading activities.
+My project is called TakeMeter. I built an AI classifier that reads public Stocktwits posts and categorizes them into four groups:
 
-I chose Stocktwits because I am interested in investing and want to understand how people communicate about stocks. I am collecting and labeling real posts to fine-tune a model that can classify new stock market discussions.
+analysis: Posts that use financial data or technical evidence.
+
+prediction: Posts predicting stock prices or market movements without supporting evidence.
+
+reaction: Posts expressing emotions, excitement, frustration, or humor.
+
+trade_update: Posts reporting trades, positions, or investment results.
+
+I collected 200 Stocktwits posts, mainly discussing NVDA, and used them to fine-tune a pretrained DistilBERT model.
+
+The goal is to help distinguish useful financial discussions from speculation, emotional reactions, and personal trading updates.
+
+My first model achieved 56.7% test accuracy. It performed better on analysis and reaction posts but struggled with prediction and trade_update. I plan to investigate these weaknesses in Unit 6.
 
 ---
 
@@ -210,7 +222,7 @@ analysis because the post refers to a specific technical indicator, the 50-day m
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
 **Base model:**
- distilbert-base-uncased (DistilBERT)
+distilbert-base-uncased (DistilBERT)
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
 Epochs: 3
@@ -228,29 +240,26 @@ Device: CP
 **Anything I changed from the defaults, and why:**
 I kept all the default training settings provided by CodePath. I changed the dataset path from data/practice_labels.csv to labels.csv to train on my 200 Stocktwits posts. I also configured the four labels: analysis, prediction, reaction, and trade_update.
 
-**Split sizes:** 
+**Split sizes:**
 Training: 139 posts (69.5%)
 
 Validation: 31 posts (15.5%)
 
 Test: 30 posts (15%)
 
-
 **Dataset Split (Seed 42)**
 
-| Label | Training (70%) | Validation (15%) | Test (15%) | Total |
-|:---|---:|---:|---:|---:|
-| `analysis` | 38 | 9 | 8 | 55 |
-| `prediction` | 37 | 8 | 8 | 53 |
-| `reaction` | 48 | 11 | 11 | 70 |
-| `trade_update` | 16 | 3 | 3 | 22 |
-| **Total** | **139** | **31** | **30** | **200** |
-
+| Label          | Training (70%) | Validation (15%) | Test (15%) |   Total |
+| :------------- | -------------: | ---------------: | ---------: | ------: |
+| `analysis`     |             38 |                9 |          8 |      55 |
+| `prediction`   |             37 |                8 |          8 |      53 |
+| `reaction`     |             48 |               11 |         11 |      70 |
+| `trade_update` |             16 |                3 |          3 |      22 |
+| **Total**      |        **139** |           **31** |     **30** | **200** |
 
 The dataset contains 200 labeled Stocktwits posts, split into 139 training examples, 31 validation examples, and 30 test examples.
 
 The `trade_update` category has only 3 test examples, making its F1 score less reliable. Even one incorrect prediction can significantly affect the results. I will investigate this limitation when evaluating the model across three different seeds in Unit 6.
-
 
 ---
 
@@ -265,17 +274,23 @@ The `trade_update` category has only 3 test examples, making its F1 score less r
 
 **Moment 1**
 
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+What I asked for: I asked Ai to help me figure out why my notebook was showing errors when checking my dataset.
+
+What came back: Ai helped me identify that the notebook was loading the 60-example practice dataset instead of my 200 Stocktwits posts.
+
+What I changed: I changed the CSV path from data/practice_labels.csv to labels.csv. After running the validation again, my dataset passed all the checks.
 
 **Moment 2**
+What I asked for: I asked Ai to help me understand and create measurable acceptance criteria for my classifier.
 
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+What came back: Ai explained accuracy, F1 scores, dataset balance, and consistency. It also helped me compare different numerical targets.
+
+What I changed: I decided to use a 55% maximum label share instead of the initially suggested 45% because I wanted to allow some natural differences between Stocktwits categories. I also chose my own accuracy and F1 targets.
 
 **Pre-labelling disclosure:**
+I manually labeled my first 20 Stocktwits posts without AI assistance. For the remaining 180 posts, I used AI to suggest labels based on my four categories: analysis, prediction, reaction, and trade_update.
+
+I also asked AI to review the suggestions and correct potential mistakes. Afterward, I personally reviewed and approved all 180 labels before training my model. The AI-assisted rows are marked ai_assisted_reviewed in my CSV.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
