@@ -155,48 +155,55 @@ I chose trade_update as a fourth label because the other three categories do not
 
 **Where the posts came from:**
 
+I collected 200 public posts from Stocktwits, primarily from discussions mentioning NVDA. I kept the full post text in one labels.csv file without manually splitting the dataset.
+
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
+I labeled the first 20 posts independently without AI assistance and marked them cold. I used AI to suggest labels for the remaining 180 posts. After a second AI review, I personally reviewed and approved all 180 classifications. Those rows are marked ai_assisted_reviewed.
 
 **Counts per label:**
 
-| Label     | Count | Share |
-| --------- | ----- | ----- |
-|           |       |       |
-|           |       |       |
-|           |       |       |
-| **Total** |       | 100%  |
+| Label        |   Count |    Share |
+| ------------ | ------: | -------: |
+| reaction     |      70 |      35% |
+| analysis     |      55 |    27.5% |
+| prediction   |      53 |    26.5% |
+| trade_update |      22 |      11% |
+| **Total**    | **200** | **100%** |
 
 **Three hard cases**
 
 <!-- Any post that made you pause: what it was, which two labels it could have
      been, and what you chose. These are worth more than the easy 190. -->
 
-**1.**
+**1.Analysis vs. Prediction**
 
 > _The post:_
->
+> $NVDA Nvidia slices through its 50-day moving average. Can it recover it by the end of the week? #ibdpartner @MarketSurge @InvestorsBusinessDaily
 > _Could have been:_
->
+> analysis or prediction.
 > _I chose, because:_
 
-**2.**
+analysis because the post refers to a specific technical indicator, the 50-day moving average. Although it asks about a future recovery, it does not make a direct price forecast.
+
+**2.Trade Update vs. Reaction**
 
 > _The post:_
->
+> $NVDA 222.5p +330%🔥
 > _Could have been:_
->
-> _I chose, because:_
+> trade*update or reaction.
+> \_I chose, because:*
+> trade_update because the options contract and percentage gain suggest a personal trading result, even though the fire emoji expresses excitement.
 
-**3.**
+**3.Prediction vs. Reaction**
 
 > _The post:_
->
+> $NVDA 225? lol 125 was already long ago!! Tho won’t be there anytime soon!!
 > _Could have been:_
->
+> prediction or reaction.
 > _I chose, because:_
 
----
+## prediction because the writer is expressing an expectation about the stock's future price, despite the humorous language.
 
 ## The Training Run
 
