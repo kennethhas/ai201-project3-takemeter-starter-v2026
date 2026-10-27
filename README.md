@@ -368,13 +368,13 @@ However, trade_update contains significantly fewer examples than the other categ
 <!-- MET or MISSED against LAST UNIT's target. The target has to hold across
      all three seeds, not turn up sometimes. -->
 
-| #   | Criterion               | Target                                  | Verdict    | How I decided                                                         |
-| --- | ----------------------- | --------------------------------------- | ---------- | --------------------------------------------------------------------- |
-| 1   | Overall accuracy        | >= 70% on all three seeds               | MISSED     | Accuracy was 56.7%, 56.7%, and 43.3%. None reached 70%.               |
-| 2   | Per-label F1            | >= 0.60 for every label                 | MISSED     | Prediction and trade_update scored 0.000 F1 across all three seeds.   |
-| 3   | Dataset balance         | No label above 55%                      | MET        | Reaction was the largest category at 35%, below 55%.                  |
-| 4   | Training consistency    | Accuracy spread <= 15 percentage points | MET        | The accuracy spread was 13.3 percentage points.                       |
-| 5   | Self-labeling agreement | >= 16/20 matching labels                | NOT TESTED | The required two independent labeling passes have not been completed. |
+| #   | Criterion               | Target                                  | Verdict | How I decided                                                                                                                          |
+| --- | ----------------------- | --------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Overall accuracy        | >= 70% on all three seeds               | MISSED  | Accuracy was 56.7%, 56.7%, and 43.3%. None reached 70%.                                                                                |
+| 2   | Per-label F1            | >= 0.60 for every label                 | MISSED  | Prediction and trade_update scored 0.000 F1 across all three seeds.                                                                    |
+| 3   | Dataset balance         | No label above 55%                      | MET     | Reaction was the largest category at 35%, below 55%.                                                                                   |
+| 4   | Training consistency    | Accuracy spread <= 15 percentage points | MET     | The accuracy spread was 13.3 percentage points.                                                                                        |
+| 5   | Self-labeling agreement | At least 16/20 (80%)                    | MET     | I independently labeled 20 Stocktwits posts twice, at least 24 hours apart. My labels matched on 16 of 20 posts, giving 80% agreement. |
 
 **Diagnoses**
 Criterion 1 — Overall Accuracy: MISSED
