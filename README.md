@@ -235,7 +235,7 @@ Random seed: 42
 
 Maximum sequence length: 128 tokens
 
-Device: CP
+Device: CPU
 
 **Anything I changed from the defaults, and why:**
 I kept all the default training settings provided by CodePath. I changed the dataset path from data/practice_labels.csv to labels.csv to train on my 200 Stocktwits posts. I also configured the four labels: analysis, prediction, reaction, and trade_update.
@@ -334,7 +334,7 @@ This tells me that fine-tuning helped my model recognize some categories, but it
 | 2. Every label F1           | >= 0.60 each label | Min F1: 0.000 | Min F1: 0.000 | Min F1: 0.000 | MISSED             |
 | 3. Dataset balance          | No label > 55%     | 35% max       | 35% max       | 35% max       | MET                |
 | 4. Consistency across seeds | Spread <= 0.15     | 0.567         | 0.567         | 0.433         | MET (spread 0.133) |
-| 5. Labeling agreement       | >= 16/20           | Not tested    | Not tested    | Not tested    | PENDING            |
+| 5. Labeling agreement       | >= 16/20           | 16/20 (80%)   | 16/20 (80%)   | 16/20 (80%)   | MET                |
 
 **Criterion 3 — Dataset Balance: MET**
 
@@ -344,22 +344,43 @@ The largest category is reaction at 35%, which is below my original 55% limit. T
 
 However, trade_update contains significantly fewer examples than the other categories, which might contribute to its poor classification performance. I will investigate this further before deciding on an improvement.
 
+**Criterion 5 — Labeling Agreement: MET**
+
+I labeled the same 20 Stocktwits posts twice, at least 24 hours apart, without checking my previous answers.
+
+My labels matched on 16 out of 20 posts, giving me an agreement rate of 80%, which meets my original target.
+
+This is a separate labeling consistency test, so the result is the same across all three seed columns.
+
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+Seed: 42
+Device: CPU (PyTorch 2.14.1+cpu)
 
-| true \ predicted |     |     |     |
-| ---------------- | --- | --- | --- |
-| \*\*\*\*         |     |     |     |
-| \*\*\*\*         |     |     |     |
-| \*\*\*\*         |     |     |     |
+| Actual Label ↓ / Predicted Label → | Analysis | Prediction | Reaction | Trade Update |  Total |
+| :--------------------------------- | -------: | ---------: | -------: | -----------: | -----: |
+| **Analysis**                       |    **6** |          0 |        2 |            0 |      8 |
+| **Prediction**                     |        1 |      **0** |    **7** |            0 |      8 |
+| **Reaction**                       |        0 |          0 |   **11** |            0 |     11 |
+| **Trade Update**                   |        0 |          0 |        3 |        **0** |      3 |
+| **Total Predictions**              |        7 |          0 |       23 |            0 | **30** |
 
 **My biggest off-diagonal number, and what it means:**
 
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+The largest error was 7 actual `prediction` posts incorrectly
+classified as `reaction`. In the opposite direction, no actual
+`reaction` posts were classified as `prediction`.
+
+The model predicted `reaction` for 23 out of 30 posts and never
+predicted `prediction` or `trade_update`.
+
+This shows that the model struggled to distinguish future stock
+predictions from market reactions. It also failed to recognize
+trade updates, explaining why both categories had an F1 score
+of 0.000.
+
+Overall, the model correctly classified 17 out of 30 posts
+(56.7% accuracy).
 
 ---
 
@@ -383,11 +404,15 @@ My model did not achieve 70% accuracy on any of the three seeds. The confusion m
 
 Criterion 2 — Per-Label F1: MISSED
 
-Both prediction and trade_update scored 0.000 F1 across all three seeds. In Seed 42, the model predicted only analysis and reaction, completely ignoring the other two categories.
+Both prediction and trade_update scored 0.000 F1 across all three seeds. In Seed 42, the model only predicted analysis and reaction, completely ignoring the other two categories.
 
-One possible explanation is the imbalance in my training data. I have 70 reaction examples but only 22 trade_update examples. Another possibility is that the model did not learn clear boundaries between the categories.
+One likely cause is insufficient training examples for trade_update. My original training split had only 16 trade_update examples compared with 48 reaction examples. The confusion matrix showed that all 3 actual trade_update test posts were incorrectly classified as reaction.
 
-My 30-post staff agreement test used a different taxonomy and does not establish whether my original Stocktwits labels were consistent. I would need to review those original labels to confirm whether inconsistent labeling contributed to the failures.
+The model also struggled with the boundary between prediction and reaction. Seven of eight actual prediction posts were classified as reaction, suggesting that the model had not learned a reliable distinction between unsupported future forecasts and emotional market reactions.
+
+These results suggest that limited training data and difficulty learning label boundaries contributed to the poor performance. However, I cannot confirm the exact cause without further testing.
+
+My 30-post staff agreement exercise used a different taxonomy, so it does not prove whether my original Stocktwits labels were applied consistently.
 
 ---
 
@@ -416,26 +441,6 @@ All 30 submitted labels matched the staff classifications. The posts were organi
 
 This agreement result also does not prove that my original four Stocktwits labels were consistently applied. My fine-tuned model still struggled with prediction and trade_update, which requires further investigation.
 
-**1.**
-
-> _The post:_
->
-> _Staff said / I said:_
->
-> _My call, and why:_
->
-> _Which pile:_
-
-**2.**
-
-> _The post:_
->
-> _Staff said / I said:_
->
-> _My call, and why:_
->
-> _Which pile:_
-
 **What the pattern in my disagreements tells me:**
 All 30 submitted labels matched the staff classifications. The examples appeared relatively straightforward to categorize because the distinctions between analysis, hot takes, and reactions were recognizable.
 
@@ -446,25 +451,55 @@ Since there were no disagreements, there were none to adjudicate into the three 
 ## The Improvement
 
 **What I changed:**
+I increased the training epochs from 3 to 8 to give my model more opportunities to learn. I kept the same dataset, learning rate, batch size, model, and three random seeds (42, 7, and 2024).
 
 **Which diagnosis pointed at it:**
+In Milestone 4, my model failed Criteria 1 and 2. Overall accuracy was below 70% on all three seeds, and both prediction and trade_update had F1 scores of 0.000.
+
+My confusion matrix also showed that 7 out of 8 actual prediction posts were incorrectly classified as reaction in Seed 42.
+
+I noticed that validation loss was still decreasing after 3 epochs, which suggested the model might benefit from additional training.
+
+I chose to increase the epochs to test whether more training would improve accuracy and help the model recognize the weaker categories.
 
 ### Run Log — After
 
-| Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
-| --------- | ------ | ------- | ------ | --------- | ------- |
-| 1.        |        |         |        |           |         |
-| 2.        |        |         |        |           |         |
-| 3.        |        |         |        |           |         |
-| 4.        |        |         |        |           |         |
-| 5.        |        |         |        |           |         |
+
+| Criterion                   | Target             | Seed 42       | Seed 7        | Seed 2024     | Verdict               |
+| --------------------------- | ------------------ | ------------- | ------------- | ------------- | --------------------- |
+| 1. Overall accuracy         | >= 0.70 each seed  | 0.633         | 0.667         | 0.400         | MISSED                |
+| 2. Every label F1           | >= 0.60 each label | Min F1: 0.000 | Min F1: 0.000 | Min F1: 0.000 | MISSED                |
+| 3. Dataset balance          | No label > 55%     | 35% max       | 35% max       | 35% max       | MET                   |
+| 4. Consistency across seeds | Spread <= 0.15     | 0.633         | 0.667         | 0.400         | MISSED (spread 0.267) |
+| 5. Labeling agreement       | >= 16/20           | 80%           | 80%           | 80%           | MET (reported 16/20)  |
+
+### Improvement Verdict
+
+Increasing the training epochs from 3 to 8 partially improved my model.
+
+Average accuracy increased from 52.2% to 56.7%, while average macro F1 increased from 0.320 to 0.424.
+
+The model began identifying some `prediction` posts correctly in Seeds 42 and 7, but Seed 2024 still achieved 0.000 F1 for that category.
+
+The biggest remaining weakness is `trade_update`, which scored 0.000 F1 in every run.
+
+The model also became less stable across seeds, with accuracy spread increasing from 13.3 to 26.7 percentage points.
+
+Overall, the improvement helped some categories but did not meet my original accuracy and per-label F1 targets.
 
 **Did it help, and how do I know:**
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+Yes, but only partially.
 
----
+After increasing training from 3 to 8 epochs, my model's average accuracy improved from 52.2% to 56.7%, and average macro F1 increased from 0.320 to 0.424.
+
+The biggest improvement was in prediction. Its F1 increased from 0.000 to 0.500 for Seed 42 and 0.533 for Seed 7. However, Seed 2024 still scored 0.000.
+
+The improvement also had limitations. The trade_update category still had an F1 of 0.000 across all three seeds, and the accuracy spread increased from 13.3 to 26.7 percentage points, making the model less consistent.
+
+I know the change partially helped because I compared the before-and-after results using the same three seeds and evaluation method.
+
+ Overall, the model improved on average, but it still failed to reach my original 70% accuracy and 0.60 per-label F1 targets.
 
 ## What's Still Broken
 
@@ -473,7 +508,25 @@ Since there were no disagreements, there were none to adjudicate into the three 
 **The gap between what I meant my labels to capture and what the model
 learned:**
 
+I wanted my model to distinguish financial analysis, future predictions, emotional reactions, and actual trading updates. However, even after increasing training from 3 to 8 epochs, my model still failed to recognize trade_update, and its accuracy varied significantly across seeds.
+
 <!-- Two sentences. Your confusion matrix is the evidence. -->
+
+What I would fix next:
+
+My first priority would be to collect 30 additional, clearly labeled trade_update examples. This category has only 22 examples in my original dataset, compared with 70 reaction examples, and it scored 0.000 F1 across all three seeds after the improvement.
+
+I would add the new examples to training while keeping the original test sets unchanged, then retrain and compare the results.
+
+My second priority would be to review the boundary between prediction and reaction. In the original Seed 42 confusion matrix, 7 actual prediction posts were classified as reaction. Although additional training improved prediction F1 in two seeds, the third seed still scored 0.000.
+
+I would also investigate training stability. After increasing the epochs, the accuracy spread rose from 13.3 to 26.7 percentage points. This suggests the model's performance is sensitive to training conditions or data splits.
+
+Why I stopped here:
+
+I completed one controlled improvement by increasing training from 3 to 8 epochs and measured it across all three seeds.
+
+The experiment improved average accuracy and macro F1, but it did not meet my original performance targets. Rather than changing multiple things at once, I would test additional data as a separate experiment to determine whether it addresses the remaining weaknesses.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
