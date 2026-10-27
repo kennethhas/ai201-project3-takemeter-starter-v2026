@@ -301,25 +301,28 @@ I also asked AI to review the suggestions and correct potential mistakes. Afterw
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
+Both models were tested on the same 30 held-out stock-market posts using my four labels: analysis, prediction, reaction, and trade_update.
 
-| Measure          | Baseline | Trained | Difference |
-| ---------------- | -------- | ------- | ---------- |
-| Overall accuracy |          |         |            |
-| Macro F1         |          |         |            |
-| F1 — `label_one` |          |         |            |
-| F1 — `label_two` |          |         |            |
+| Measure             | Baseline | Trained | Difference |
+| ------------------- | -------- | ------- | ---------- |
+| Overall accuracy    | 0.333    | 0.567   | +0.233     |
+| Macro F1            | 0.371    | 0.362   | -0.009     |
+| F1 — `analysis`     | 0.222    | 0.800   | +0.578     |
+| F1 — `prediction`   | 0.471    | 0.000   | -0.471     |
+| F1 — `reaction`     | 0.125    | 0.647   | +0.522     |
+| F1 — `trade_update` | 0.667    | 0.000   | -0.667     |
 
 **What I predicted before I looked:**
 
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+My initial expectation would have been that the fine-tuned model would outperform the baseline because it was trained on my specific stock-market classification rules. I would particularly have expected improvements in analysis and trade_update, since financial evidence and completed trading actions provide recognizable features for classification.
 
 **What the gap actually means:**
 
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+My fine-tuned model performed better than the baseline in overall accuracy, improving from 33.3% to 56.7%. This means it correctly classified 7 more posts out of the 30 tested.
+
+However, the results also show a problem. My model improved significantly on analysis and reaction, but scored 0.000 F1 on prediction and trade_update. The macro F1 decreased slightly from 0.371 to 0.362.
+
+This tells me that fine-tuning helped my model recognize some categories, but it still struggles with others. One possible reason is that some of my labels overlap or were applied inconsistently during training.
 
 ---
 
