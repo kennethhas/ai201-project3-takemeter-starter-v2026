@@ -328,16 +328,22 @@ This tells me that fine-tuning helped my model recognize some categories, but it
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
-
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
-| --------- | ------ | ------- | ------ | --------- | ------- |
-| 1.        |        |         |        |           |         |
-| 2.        |        |         |        |           |         |
-| 3.        |        |         |        |           |         |
-| 4.        |        |         |        |           |         |
-| 5.        |        |         |        |           |         |
+|---|---|---|---|---|---|
+| 1. Overall accuracy | >= 0.70 each seed | 0.567 | 0.567 | 0.433 | MISSED |
+| 2. Every label F1 | >= 0.60 each label | Min F1: 0.000 | Min F1: 0.000 | Min F1: 0.000 | MISSED |
+| 3. Dataset balance | No label > 55% | 35% max | 35% max | 35% max | MET |
+| 4. Consistency across seeds | Spread <= 0.15 | 0.567 | 0.567 | 0.433 | MET (spread 0.133) |
+| 5. Labeling agreement | >= 16/20 | Not tested | Not tested | Not tested | PENDING |
+
+
+**Criterion 3 — Dataset Balance: MET**
+
+My dataset contains 200 labeled Stocktwits posts: 70 reaction (35%), 55 analysis (27.5%), 53 prediction (26.5%), and 22 trade_update (11%).
+
+The largest category is reaction at 35%, which is below my original 55% limit. Therefore, this criterion is MET.
+
+However, trade_update contains significantly fewer examples than the other categories, which might contribute to its poor classification performance. I will investigate this further before deciding on an improvement.
 
 ### Confusion matrix
 
