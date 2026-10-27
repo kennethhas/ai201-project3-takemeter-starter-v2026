@@ -368,24 +368,26 @@ However, trade_update contains significantly fewer examples than the other categ
 <!-- MET or MISSED against LAST UNIT's target. The target has to hold across
      all three seeds, not turn up sometimes. -->
 
-| #   | Criterion | Target | Verdict | How I decided |
-| --- | --------- | ------ | ------- | ------------- |
-| 1   |           |        |         |               |
-| 2   |           |        |         |               |
-| 3   |           |        |         |               |
-| 4   |           |        |         |               |
-| 5   |           |        |         |               |
+| #   | Criterion               | Target                                  | Verdict    | How I decided                                                         |
+| --- | ----------------------- | --------------------------------------- | ---------- | --------------------------------------------------------------------- |
+| 1   | Overall accuracy        | >= 70% on all three seeds               | MISSED     | Accuracy was 56.7%, 56.7%, and 43.3%. None reached 70%.               |
+| 2   | Per-label F1            | >= 0.60 for every label                 | MISSED     | Prediction and trade_update scored 0.000 F1 across all three seeds.   |
+| 3   | Dataset balance         | No label above 55%                      | MET        | Reaction was the largest category at 35%, below 55%.                  |
+| 4   | Training consistency    | Accuracy spread <= 15 percentage points | MET        | The accuracy spread was 13.3 percentage points.                       |
+| 5   | Self-labeling agreement | >= 16/20 matching labels                | NOT TESTED | The required two independent labeling passes have not been completed. |
 
 **Diagnoses**
+Criterion 1 — Overall Accuracy: MISSED
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+My model did not achieve 70% accuracy on any of the three seeds. The confusion matrix shows that many mistakes came from classifying prediction and trade_update posts as reaction.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+Criterion 2 — Per-Label F1: MISSED
+
+Both prediction and trade_update scored 0.000 F1 across all three seeds. In Seed 42, the model predicted only analysis and reaction, completely ignoring the other two categories.
+
+One possible explanation is the imbalance in my training data. I have 70 reaction examples but only 22 trade_update examples. Another possibility is that the model did not learn clear boundaries between the categories.
+
+My 30-post staff agreement test used a different taxonomy and does not establish whether my original Stocktwits labels were consistent. I would need to review those original labels to confirm whether inconsistent labeling contributed to the failures.
 
 ---
 
