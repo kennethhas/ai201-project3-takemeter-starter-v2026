@@ -328,14 +328,13 @@ This tells me that fine-tuning helped my model recognize some categories, but it
 
 ## Run Log — Before
 
-| Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
-|---|---|---|---|---|---|
-| 1. Overall accuracy | >= 0.70 each seed | 0.567 | 0.567 | 0.433 | MISSED |
-| 2. Every label F1 | >= 0.60 each label | Min F1: 0.000 | Min F1: 0.000 | Min F1: 0.000 | MISSED |
-| 3. Dataset balance | No label > 55% | 35% max | 35% max | 35% max | MET |
-| 4. Consistency across seeds | Spread <= 0.15 | 0.567 | 0.567 | 0.433 | MET (spread 0.133) |
-| 5. Labeling agreement | >= 16/20 | Not tested | Not tested | Not tested | PENDING |
-
+| Criterion                   | Target             | Seed 42       | Seed 7        | Seed 2024     | Verdict            |
+| --------------------------- | ------------------ | ------------- | ------------- | ------------- | ------------------ |
+| 1. Overall accuracy         | >= 0.70 each seed  | 0.567         | 0.567         | 0.433         | MISSED             |
+| 2. Every label F1           | >= 0.60 each label | Min F1: 0.000 | Min F1: 0.000 | Min F1: 0.000 | MISSED             |
+| 3. Dataset balance          | No label > 55%     | 35% max       | 35% max       | 35% max       | MET                |
+| 4. Consistency across seeds | Spread <= 0.15     | 0.567         | 0.567         | 0.433         | MET (spread 0.133) |
+| 5. Labeling agreement       | >= 16/20           | Not tested    | Not tested    | Not tested    | PENDING            |
 
 **Criterion 3 — Dataset Balance: MET**
 
@@ -392,7 +391,6 @@ However, trade_update contains significantly fewer examples than the other categ
 
 ## Agreement Report
 
-
 <!-- Your rate against the staff set, and every disagreement adjudicated.
 
      Remember you labelled these 30 under the STAFF taxonomy in
@@ -407,7 +405,6 @@ However, trade_update contains significantly fewer examples than the other categ
      winning some of these. -->
 
 **Disagreements**
-
 
 The comparison found no disagreements between my submitted labels and the staff labels, so there are no disagreements to adjudicate or sort into the three piles.
 
@@ -438,6 +435,9 @@ This agreement result also does not prove that my original four Stocktwits label
 > _Which pile:_
 
 **What the pattern in my disagreements tells me:**
+All 30 submitted labels matched the staff classifications. The examples appeared relatively straightforward to categorize because the distinctions between analysis, hot takes, and reactions were recognizable.
+
+Since there were no disagreements, there were none to adjudicate into the three piles. This result does not establish whether my original four Stocktwits labels were consistently applied.
 
 ---
 
